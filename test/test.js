@@ -1,5 +1,5 @@
 const assert = require('assert');
-const bch = require('bitcore-lib-cash');
+const bitcoin = require('bsv');
 const datacash = require('../index');
 
 // Private Key for Demo Purpose Only
@@ -48,7 +48,7 @@ describe('datacash', function() {
     })
     describe('cash only', function() {
       it('to', function(done) {
-        const address = new bch.PrivateKey(privKey).toAddress()
+        const address = new bitcoin.PrivateKey(privKey).toAddress()
         const options = {
           cash: {
             key: privKey,
@@ -88,12 +88,12 @@ describe('datacash', function() {
           // output length 1 => the output points to the sender by default
           assert.equal(generated.outputs.length, 1)
           // script is a pubkeyhashout
-          let s = new bch.Script(generated.outputs[0].script)
+          let s = new bitcoin.Script(generated.outputs[0].script)
           assert(s.isPublicKeyHashOut())
 
           // script sends the money to the same address as the sender
           // specified by the private key
-          const address = new bch.PrivateKey(privKey).toAddress()
+          const address = new bitcoin.PrivateKey(privKey).toAddress()
           assert.equal(address.toString(), s.toAddress().toString())
 
           done()
@@ -156,18 +156,18 @@ describe('datacash', function() {
           // must have two outputs
           assert.equal(generated.outputs.length, 2)
 
-          let s1 = new bch.Script(generated.outputs[0].script)
+          let s1 = new bitcoin.Script(generated.outputs[0].script)
 
           // the first output is OP_RETURN
-          assert(s1.chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+          assert(s1.chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
 
           // the second script is a pubkeyhashout (change address)
-          let s2 = new bch.Script(generated.outputs[1].script)
+          let s2 = new bitcoin.Script(generated.outputs[1].script)
           assert(s2.isPublicKeyHashOut())
 
           // script sends the money to the same address as the sender
           // specified by the private key
-          const address = new bch.PrivateKey(privKey).toAddress()
+          const address = new bitcoin.PrivateKey(privKey).toAddress()
           assert.equal(address.toString(), s2.toAddress().toString())
 
           done()
@@ -198,18 +198,18 @@ describe('datacash', function() {
           // must have two outputs
           assert.equal(generated.outputs.length, 2)
 
-          let s1 = new bch.Script(generated.outputs[0].script)
+          let s1 = new bitcoin.Script(generated.outputs[0].script)
 
           // the first output is OP_RETURN
-          assert(s1.chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+          assert(s1.chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
 
           // the second script is a pubkeyhashout (change address)
-          let s2 = new bch.Script(generated.outputs[1].script)
+          let s2 = new bitcoin.Script(generated.outputs[1].script)
           assert(s2.isPublicKeyHashOut())
 
           // script sends the money to the same address as the sender
           // specified by the private key
-          const address = new bch.PrivateKey(privKey).toAddress()
+          const address = new bitcoin.PrivateKey(privKey).toAddress()
           assert.equal(address.toString(), s2.toAddress().toString())
 
           done()
@@ -220,7 +220,7 @@ describe('datacash', function() {
     describe('attach coins to data', function() {
       it('paying tip to 1 user', function(done) {
         // send to myself
-        const receiver = new bch.PrivateKey(privKey).toAddress()
+        const receiver = new bitcoin.PrivateKey(privKey).toAddress()
 
         const options = {
           data: ["0x6d02", "hello world"],
@@ -237,26 +237,26 @@ describe('datacash', function() {
           assert.equal(tx.outputs.length, 3)
 
           // 1. OP_RETURN
-          let s1 = new bch.Script(tx.outputs[0].script)
-          assert(s1.chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+          let s1 = new bitcoin.Script(tx.outputs[0].script)
+          assert(s1.chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
           // 2. Manual transaction output
           // the second script is a pubkeyhashout (change address)
-          let s2 = new bch.Script(tx.outputs[1].script)
+          let s2 = new bitcoin.Script(tx.outputs[1].script)
           assert(s2.isPublicKeyHashOut())
           // the value sent is 1000
           assert.equal(tx.outputs[1].satoshis, 1000)
           // the receiver address is the address specified in cash.to
-          assert.equal(s2.toAddress().toString(), bch.Address(receiver).toString())
+          assert.equal(s2.toAddress().toString(), bitcoin.Address(receiver).toString())
 
           // 3. Change address transaction output
-          let s3 = new bch.Script(tx.outputs[2].script)
+          let s3 = new bitcoin.Script(tx.outputs[2].script)
           assert(s3.isPublicKeyHashOut())
           done()
         })
       })
       it('paying tip to 2 users', function(done) {
         // send to myself
-        const receiver = new bch.PrivateKey(privKey).toAddress()
+        const receiver = new bitcoin.PrivateKey(privKey).toAddress()
 
         const options = {
           data: ["0x6d02", "hello world"],
@@ -276,28 +276,28 @@ describe('datacash', function() {
           assert.equal(tx.outputs.length, 4)
 
           // 1. OP_RETURN
-          let s1 = new bch.Script(tx.outputs[0].script)
-          assert(s1.chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+          let s1 = new bitcoin.Script(tx.outputs[0].script)
+          assert(s1.chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
           // 2. Manual transaction output
           // the second script is a pubkeyhashout (change address)
-          let s2 = new bch.Script(tx.outputs[1].script)
+          let s2 = new bitcoin.Script(tx.outputs[1].script)
           assert(s2.isPublicKeyHashOut())
           // the value sent is 1000
           assert.equal(tx.outputs[1].satoshis, 1000)
           // the receiver address is the address specified in cash.to
-          assert.equal(s2.toAddress().toString(), bch.Address(receiver).toString())
+          assert.equal(s2.toAddress().toString(), bitcoin.Address(receiver).toString())
 
           // 3. Manual transaction output
           // the third script is a pubkeyhashout (change address)
-          let s3 = new bch.Script(tx.outputs[2].script)
+          let s3 = new bitcoin.Script(tx.outputs[2].script)
           assert(s3.isPublicKeyHashOut())
           // the value sent is 1000
           assert.equal(tx.outputs[2].satoshis, 2000)
           // the receiver address is the address specified in cash.to
-          assert.equal(s3.toAddress().toString(), bch.Address(receiver).toString())
+          assert.equal(s3.toAddress().toString(), bitcoin.Address(receiver).toString())
 
           // 3. Change address transaction output
-          let s4 = new bch.Script(tx.outputs[3].script)
+          let s4 = new bitcoin.Script(tx.outputs[3].script)
           assert(s4.isPublicKeyHashOut())
           done()
         })
@@ -370,17 +370,17 @@ describe('datacash', function() {
               // tx1's output should have one item
               assert.equal(tx1.outputs.length, 1)
               // and it should be an OP_RETURN
-              let script1 = new bch.Script(tx1.outputs[0].script)
-              assert(script1.chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+              let script1 = new bitcoin.Script(tx1.outputs[0].script)
+              assert(script1.chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
 
               // tx2's output should have two items
               assert.equal(tx2.outputs.length, 2)
               let script2 = [
-                new bch.Script(tx2.outputs[0].script),
-                new bch.Script(tx2.outputs[1].script)
+                new bitcoin.Script(tx2.outputs[0].script),
+                new bitcoin.Script(tx2.outputs[1].script)
               ]
               // the first should be OP_RETURN
-              assert(script2[0].chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+              assert(script2[0].chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
               // the second script is a pubkeyhashout (change address)
               assert(script2[1].isPublicKeyHashOut())
               done()
@@ -414,18 +414,18 @@ describe('datacash', function() {
               // tx2's output should have two items
               assert.equal(tx2.outputs.length, 2)
               let script2 = [
-                new bch.Script(tx2.outputs[0].script),
-                new bch.Script(tx2.outputs[1].script)
+                new bitcoin.Script(tx2.outputs[0].script),
+                new bitcoin.Script(tx2.outputs[1].script)
               ]
               // the first should be OP_RETURN
-              assert(script2[0].chunks[0].opcodenum, bch.Opcode.OP_RETURN)
+              assert(script2[0].chunks[0].opcodenum, bitcoin.Opcode.OP_RETURN)
               // the second script is a pubkeyhashout (change address)
               assert(script2[1].isPublicKeyHashOut())
 
               // the script for the original OP_RETURN
               // should match the new OP_RETURN script
               // because the 'data' attribute was ignored
-              let script1 = new bch.Script(tx1.outputs[0].script)
+              let script1 = new bitcoin.Script(tx1.outputs[0].script)
               assert.equal(script1.toString(), script2[0].toString())
               done()
             })
@@ -448,11 +448,11 @@ describe('datacash', function() {
               // the input should have 'script' property
               assert(tx2.inputs[0].script)
               // the script should be public key hash in
-              let script = new bch.Script(tx2.inputs[0].script)
+              let script = new bitcoin.Script(tx2.inputs[0].script)
               assert(script.isPublicKeyHashIn())
               // the imported transaction's input script address should match
               // the address corresponding to the originally imported private key
-              const address = new bch.PrivateKey(privKey).toAddress()
+              const address = new bitcoin.PrivateKey(privKey).toAddress()
               assert.equal(address.toString(), script.toAddress().toString())
               done()
             })
@@ -534,10 +534,10 @@ describe('datacash', function() {
     })
   })
   describe('advanced', function() {
-    describe('bch', function() {
-      it('exposes bch', function() {
-        assert(datacash.bch.Networks)
-        assert(datacash.bch.Opcode)
+    describe('bitcoin', function() {
+      it('exposes bitcoin', function() {
+        assert(datacash.bitcoin.Networks)
+        assert(datacash.bitcoin.Opcode)
       })
     })
     describe('connect', function() {
