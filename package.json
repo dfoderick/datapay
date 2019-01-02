@@ -1,0 +1,30 @@
+{
+  "name": "datacash",
+  "version": "1.2.1",
+  "description": "post data over bitcoin cash",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "browserify index.js --standalone datacash > dist/datacash.js && uglifyjs dist/datacash.js > dist/datacash.min.js"
+  },
+  "keywords": [
+    "bch",
+    "bitcoincash",
+    "bitcoin"
+  ],
+  "author": "unwriter",
+  "license": "ISC",
+  "unpkg": "dist/datacash.min.js",
+  "dependencies": {
+    "bitcore-explorers": "^1.0.1",
+    "bitcore-lib-cash": "^0.18.1",
+    "mingo": "^2.2.4"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "mocha": "^5.1.1",
+    "uglify-es": "^3.3.9"
+  }
+}
