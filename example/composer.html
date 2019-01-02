@@ -75,9 +75,9 @@ textarea {
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://unpkg.com/datacash"></script>
+<script src="https://unpkg.com/datapay"></script>
 <script>
-var endpoint = "https://chainfeed.org/send";
+var endpoint = "https://bsvexplorer.com/tx/send";
 document.addEventListener("DOMContentLoaded", function(event) {
   var dslEl = document.querySelector("#dsl");
   var txEl = document.querySelector("#tx");
@@ -88,19 +88,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
     update(e.target.value)
   }
   howEl.onclick = function(e) {
-    alert("The first column is where you declaratively describe your transaction (See datacash documentation). The second column is where the generated transaction is displayed. The third column displays the actual hex encoded string that can be broadcasted to BCH network. The default transaction description is just a simple data-only OP_RETURN transaction which only spends 300 satoshi transaction fee and nothing more, but you can experiment with different options as well. WARNING: THIS ACTUALLY WORKS, SO HANDLE WITH CARE.")
+    alert("The first column is where you declaratively describe your transaction (See datapay documentation). The second column is where the generated transaction is displayed. The third column displays the actual hex encoded string that can be broadcasted to BCH network. The default transaction description is just a simple data-only OP_RETURN transaction which only spends 300 satoshi transaction fee and nothing more, but you can experiment with different options as well. WARNING: THIS ACTUALLY WORKS, SO HANDLE WITH CARE.")
     return false;
   }
   var update = function(html) {
     var h = html.replace(/\n/g, '');
-    datacash.build(JSON.parse(h), function(err, tx) {
+    datapay.build(JSON.parse(h), function(err, tx) {
       txEl.value = JSON.stringify(tx.toObject(), null, 2);
       hexEl.value = tx.toString()
     })
   }
   sendEl.onclick = function(e) {
     var t = hexEl.value;
-    var isvalid = new datacash.bch.Transaction(t).verify();
+    var isvalid = new datapay.bsv.Transaction(t).verify();
     if (isvalid) {
       send(t)
     }
@@ -110,20 +110,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 })
 var send = function(transaction) {
   fetch(endpoint, {
-    headers: { 'Content-type': 'application/json' },
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
     method: 'POST',
-    body: JSON.stringify({tx: transaction})
+    body: JSON.stringify({rawtx: transaction})
   })
   .then(function(res) {
     return res.json();
   })
   .then(function(response) {
     console.log(response);
-    document.querySelector("#sent").innerHTML = "<a href='https://explorer.bitcoin.com/bch/tx/" + response.tx + "' target='_blank'>Success! Click to view Transaction</a>";
+    document.querySelector("#sent").innerHTML = "<a href='https://bchsvexplorer.com/tx/" + response.tx + "' target='_blank'>Success! Click to view Transaction</a>";
     document.querySelector("#sent").className = "";
     document.querySelector("#send").className = "hidden";
   })
@@ -136,7 +135,7 @@ var send = function(transaction) {
 <textarea id='dsl'>
 {
   "data": ["0x6d02", "post to memo.cash!"],
-  "cash": {
+  "pay": {
     "key": ""
   }
 }
