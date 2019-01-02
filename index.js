@@ -10,16 +10,16 @@ const defaults = {
 // and return a hex formatted string of either a tranaction or a script
 var build = function(options, callback) {
   let script = null;
-  let rpcaddr = (options.cash && options.cash.rpc) ? options.cash.rpc : defaults.rpc;
+  let rpcaddr = (options.pay && options.pay.rpc) ? options.pay.rpc : defaults.rpc;
   if (options.tx) {
     // if tx exists, check to see if it's already been signed.
     // if it's a signed transaction
-    // and the request is trying to override using 'data' or 'cash',
+    // and the request is trying to override using 'data' or 'pay',
     // we should throw an error
     let tx = new bitcoin.Transaction(options.tx)
     // transaction is already signed
     if (tx.inputs.length > 0 && tx.inputs[0].script) {
-      if (options.cash || options.data) {
+      if (options.pay || options.data) {
         callback(new Error("the transaction is already signed and cannot be modified"))
         return;
       }
@@ -31,18 +31,18 @@ var build = function(options, callback) {
       script = _script(options)
     }
   }
-  // Instantiate cash
-  if (options.cash && options.cash.key) {
+  // Instantiate pay
+  if (options.pay && options.pay.key) {
     // key exists => create a signed transaction
-    let key = options.cash.key;
+    let key = options.pay.key;
     const privateKey = new bitcoin.PrivateKey(key);
     const address = privateKey.toAddress();
     const insight = new explorer.Insight(rpcaddr)
     insight.getUnspentUtxos(address, function (err, res) {
       console.log("res before = ", res)
 
-      if (options.cash.filter && options.cash.filter.q && options.cash.filter.q.find) {
-        let f = new mingo.Query(options.cash.filter.q.find)
+      if (options.pay.filter && options.pay.filter.q && options.pay.filter.q.find) {
+        let f = new mingo.Query(options.pay.filter.q.find)
         res = res.filter(function(item) {
           return f.test(item)
         })
@@ -55,15 +55,15 @@ var build = function(options, callback) {
       if (script) {
         tx.addOutput(new bitcoin.Transaction.Output({ script: script, satoshis: 0 }));
       }
-      if (options.cash.to && Array.isArray(options.cash.to)) {
-        options.cash.to.forEach(function(receiver) {
+      if (options.pay.to && Array.isArray(options.pay.to)) {
+        options.pay.to.forEach(function(receiver) {
           tx.to(receiver.address, receiver.value)
         })
       }
 
       tx.fee(defaults.fee).change(address);
-      if (options.cash && options.cash.fee) {
-        tx.fee(options.cash.fee)
+      if (options.pay && options.pay.fee) {
+        tx.fee(options.pay.fee)
       } else {
         var estSize=Math.ceil(tx._estimateSize()*1.4);
         tx.fee(estSize);
@@ -81,7 +81,7 @@ var build = function(options, callback) {
     })
   } else {
     // key doesn't exist => create an unsigned transaction
-    let fee = (options.cash && options.cash.fee) ? options.cash.fee : defaults.fee;
+    let fee = (options.pay && options.pay.fee) ? options.pay.fee : defaults.fee;
     let tx = new bitcoin.Transaction(options.tx).fee(fee);
     if (script) {
       tx.addOutput(new bitcoin.Transaction.Output({ script: script, satoshis: 0 }));
@@ -91,7 +91,7 @@ var build = function(options, callback) {
 }
 var send = function(options, callback) {
   build(options, function(err, tx) {
-    let rpcaddr = (options.cash && options.cash.rpc) ? options.cash.rpc : defaults.rpc;
+    let rpcaddr = (options.pay && options.pay.rpc) ? options.pay.rpc : defaults.rpc;
     const insight = new explorer.Insight(rpcaddr)
     if (callback) {
       insight.broadcast(tx.toString(), callback)

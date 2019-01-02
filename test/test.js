@@ -46,18 +46,18 @@ describe('datapay', function() {
         });
       })
     })
-    describe('cash only', function() {
+    describe('pay only', function() {
       it('to', function(done) {
         const address = new bitcoin.PrivateKey(privKey).toAddress()
         const options = {
-          cash: {
+          pay: {
             key: privKey,
             to: [{ address: address, value: 100 }]
           }
         }
         datapay.build(options, function(err, tx) {
           // If only 'key' is included, it will use the default values for
-          // rest of the cash attributes
+          // rest of the pay attributes
           // and make a transaction that sends money to oneself
           // (since no receiver is specified)
           let generated = tx.toObject();
@@ -65,15 +65,15 @@ describe('datapay', function() {
           done()
         })
       })
-      it('cash.key only', function(done) {
+      it('pay.key only', function(done) {
         const options = {
-          cash: {
+          pay: {
             key: privKey
           }
         }
         datapay.build(options, function(err, tx) {
           // If only 'key' is included, it will use the default values for
-          // rest of the cash attributes
+          // rest of the pay attributes
           // and make a transaction that sends money to oneself
           // (since no receiver is specified)
           let generated = tx.toObject();
@@ -99,9 +99,9 @@ describe('datapay', function() {
           done()
         });
       })
-      it('cash.fee only', function(done) {
+      it('pay.fee only', function(done) {
         const options = {
-          cash: {
+          pay: {
             fee: 100
           }
         }
@@ -116,9 +116,9 @@ describe('datapay', function() {
           done()
         })
       })
-      it('cash.key and cash.fee', function(done) {
+      it('pay.key and pay.fee', function(done) {
         const options = {
-          cash: {
+          pay: {
             key: privKey,
             fee: 100
           }
@@ -132,16 +132,16 @@ describe('datapay', function() {
 
       /**
 
-        cash.rpc TBD
+        pay.rpc TBD
 
       **/
 
     })
-    describe('data and cash', function() {
-      it('both data and cash', function(done) {
+    describe('data and pay', function() {
+      it('both data and pay', function(done) {
         const options = {
           data: ["0x6d02", "hello world"],
-          cash: {
+          pay: {
             key: privKey
           }
         }
@@ -173,10 +173,10 @@ describe('datapay', function() {
           done()
         })
       })
-      it.only('cash.filter', function(done) {
+      it.only('pay.filter', function(done) {
         const options = {
           data: ["0x6d02", "hello world"],
-          cash: {
+          pay: {
             key: privKey,
             filter: {
               v: 3,
@@ -224,7 +224,7 @@ describe('datapay', function() {
 
         const options = {
           data: ["0x6d02", "hello world"],
-          cash: {
+          pay: {
             key: privKey,
             to: [{
               address: receiver,
@@ -245,7 +245,7 @@ describe('datapay', function() {
           assert(s2.isPublicKeyHashOut())
           // the value sent is 1000
           assert.equal(tx.outputs[1].satoshis, 1000)
-          // the receiver address is the address specified in cash.to
+          // the receiver address is the address specified in pay.to
           assert.equal(s2.toAddress().toString(), bitcoin.Address(receiver).toString())
 
           // 3. Change address transaction output
@@ -260,7 +260,7 @@ describe('datapay', function() {
 
         const options = {
           data: ["0x6d02", "hello world"],
-          cash: {
+          pay: {
             key: privKey,
             to: [{
               address: receiver,
@@ -284,7 +284,7 @@ describe('datapay', function() {
           assert(s2.isPublicKeyHashOut())
           // the value sent is 1000
           assert.equal(tx.outputs[1].satoshis, 1000)
-          // the receiver address is the address specified in cash.to
+          // the receiver address is the address specified in pay.to
           assert.equal(s2.toAddress().toString(), bitcoin.Address(receiver).toString())
 
           // 3. Manual transaction output
@@ -293,7 +293,7 @@ describe('datapay', function() {
           assert(s3.isPublicKeyHashOut())
           // the value sent is 1000
           assert.equal(tx.outputs[2].satoshis, 2000)
-          // the receiver address is the address specified in cash.to
+          // the receiver address is the address specified in pay.to
           assert.equal(s3.toAddress().toString(), bitcoin.Address(receiver).toString())
 
           // 3. Change address transaction output
@@ -344,9 +344,9 @@ describe('datapay', function() {
             })
           })
         })
-        it('tx + cash', function(done) {
+        it('tx + pay', function(done) {
           // tx1 is an unsigned transaction
-          // and we create a signed version by adding the 'cash' attribute
+          // and we create a signed version by adding the 'pay' attribute
           const options1 = {
             data: ["0x6d02", "hello world"]
           }
@@ -356,7 +356,7 @@ describe('datapay', function() {
             // 2. build a new transaction using the exported transaction + new data
             let options2 = {
               tx: exported_tx1,
-              cash: {
+              pay: {
                 key: privKey
               }
             }
@@ -387,9 +387,9 @@ describe('datapay', function() {
             })
           })
         })
-        it('tx + cash + data', function(done) {
+        it('tx + pay + data', function(done) {
           // tx1 is an unsigned transaction
-          // and we create a signed version by adding the 'cash' attribute
+          // and we create a signed version by adding the 'pay' attribute
           // but this time we also try to sneak in 'data'
           // the 'data' should be ignored
           const options1 = {
@@ -402,7 +402,7 @@ describe('datapay', function() {
             let options2 = {
               tx: exported_tx1,
               data: ["0x6d02", "bye world"],  // trying to sneak in 'data'
-              cash: {
+              pay: {
                 key: privKey
               }
             }
@@ -436,7 +436,7 @@ describe('datapay', function() {
         it('tx only', function(done) {
           const options1 = {
             data: ["0x6d02", "hello world"],
-            cash: { key: privKey }
+            pay: { key: privKey }
           }
           // 1. build initial transaction
           datapay.build(options1, function(err, tx1) {
@@ -464,7 +464,7 @@ describe('datapay', function() {
           // Better yet, this shouldn't be used
           const options1 = {
             data: ["0x6d02", "hello world"],
-            cash: { key: privKey }
+            pay: { key: privKey }
           }
           // 1. build initial transaction
           datapay.build(options1, function(err, tx1) {
@@ -480,13 +480,13 @@ describe('datapay', function() {
             })
           })
         })
-        it('tx+ cash', function() {
+        it('tx+ pay', function() {
           // the transaction has already been signed
-          // the cash attribute should be ignored
+          // the pay attribute should be ignored
           // and throw and error
           const options1 = {
             data: ["0x6d02", "hello world"],
-            cash: { key: privKey }
+            pay: { key: privKey }
           }
           // 1. build initial transaction
           datapay.build(options1, function(err, tx1) {
@@ -496,7 +496,7 @@ describe('datapay', function() {
             // This should re-sign the transaction
             datapay.build({
               tx: exported_tx1,
-              cash: {
+              pay: {
                 key: privKey
               }
             }, function(err, tx2) {
@@ -506,10 +506,10 @@ describe('datapay', function() {
             })
           })
         })
-        it('tx + cash + data', function() {
+        it('tx + pay + data', function() {
           const options1 = {
             data: ["0x6d02", "hello world"],
-            cash: { key: privKey }
+            pay: { key: privKey }
           }
           // 1. build initial transaction
           datapay.build(options1, function(err, tx1) {
@@ -520,7 +520,7 @@ describe('datapay', function() {
             datapay.build({
               tx: exported_tx1,
               data: ["0x6d02", "bye world"],
-              cash: {
+              pay: {
                 key: privKey
               }
             }, function(err, tx2) {
