@@ -1,19 +1,19 @@
 const assert = require('assert');
 const bitcoin = require('bsv');
-const datacash = require('../index');
+const datapay = require('../index');
 
 // Private Key for Demo Purpose Only
 //const privKey = "5JZ4RXH4MoXpaUQMcJHo8DxhZtkf5U5VnYd9zZH8BRKZuAbxZEw"
 const privKey = "KxF4RmRid6SPFTG3dQcBLyHfkk6FhRiczGTMkaCCA6orxVm9t5Hh"
 
-describe('datacash', function() {
+describe('datapay', function() {
   describe('build', function() {
     describe('data only', function() {
       it('push data array', function(done) {
         const options = {
           data: ["0x6d02", "hello world"]
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           let generated = tx.toObject();
           // no input (since no one has signed yet)
           assert.equal(generated.inputs.length, 0)
@@ -31,7 +31,7 @@ describe('datacash', function() {
         const options = {
           data: "6a04366430320b68656c6c6f20776f726c64"
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           let generated = tx.toObject();
           // no input (since no one has signed yet)
           assert.equal(generated.inputs.length, 0)
@@ -55,7 +55,7 @@ describe('datacash', function() {
             to: [{ address: address, value: 100 }]
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           // If only 'key' is included, it will use the default values for
           // rest of the cash attributes
           // and make a transaction that sends money to oneself
@@ -71,7 +71,7 @@ describe('datacash', function() {
             key: privKey
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           // If only 'key' is included, it will use the default values for
           // rest of the cash attributes
           // and make a transaction that sends money to oneself
@@ -105,7 +105,7 @@ describe('datacash', function() {
             fee: 100
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           // if no key is included,
           // empty input (since no sender)
           // empty output (since nothing else is specified)
@@ -123,7 +123,7 @@ describe('datacash', function() {
             fee: 100
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           let generated = tx.toObject();
           assert.equal(generated.fee, 100)
           done()
@@ -145,7 +145,7 @@ describe('datacash', function() {
             key: privKey
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           let generated = tx.toObject();
 
           // input length 1 => from the user specifiec by the private key
@@ -187,7 +187,7 @@ describe('datacash', function() {
             }
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           let generated = tx.toObject();
 
           // input length 1 => from the user specifiec by the private key
@@ -232,7 +232,7 @@ describe('datacash', function() {
             }]
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           // output has 3 items
           assert.equal(tx.outputs.length, 3)
 
@@ -271,7 +271,7 @@ describe('datacash', function() {
             }]
           }
         }
-        datacash.build(options, function(err, tx) {
+        datapay.build(options, function(err, tx) {
           // output has 4 items
           assert.equal(tx.outputs.length, 4)
 
@@ -310,13 +310,13 @@ describe('datacash', function() {
           const options = {
             data: ["0x6d02", "hello world"]
           }
-          datacash.build(options, function(err, original_tx) {
+          datapay.build(options, function(err, original_tx) {
             // 2. export
             let exportedTx = original_tx.toString()
             // exported transaction is string
             assert.equal(typeof exportedTx, "string")
             // 3. re-import
-            datacash.build({
+            datapay.build({
               tx: exportedTx
             }, function(err, imported_tx) {
               // the imported transaction should equal the original transaction
@@ -331,14 +331,14 @@ describe('datacash', function() {
             data: ["0x6d02", "hello world"]
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. build a new transaction using the exported transaction + new data
             let options2 = {
               tx: exported_tx1,
               data: ["0x6d02", "bye world"]
             }
-            datacash.build(options2, function(err, tx2) {
+            datapay.build(options2, function(err, tx2) {
               assert.equal(tx1.toString(), tx2.toString())
               done()
             })
@@ -351,7 +351,7 @@ describe('datacash', function() {
             data: ["0x6d02", "hello world"]
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. build a new transaction using the exported transaction + new data
             let options2 = {
@@ -360,7 +360,7 @@ describe('datacash', function() {
                 key: privKey
               }
             }
-            datacash.build(options2, function(err, tx2) {
+            datapay.build(options2, function(err, tx2) {
 
               // tx1's input should be empty
               assert.equal(tx1.inputs.length, 0)
@@ -396,7 +396,7 @@ describe('datacash', function() {
             data: ["0x6d02", "hello world"]
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. build a new transaction using the exported transaction + new data
             let options2 = {
@@ -406,7 +406,7 @@ describe('datacash', function() {
                 key: privKey
               }
             }
-            datacash.build(options2, function(err, tx2) {
+            datapay.build(options2, function(err, tx2) {
 
               // tx2's input should now have one item
               assert.equal(tx2.inputs.length, 1)
@@ -439,10 +439,10 @@ describe('datacash', function() {
             cash: { key: privKey }
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. import transaction
-            datacash.build({ tx: exported_tx1 }, function(err, tx2) {
+            datapay.build({ tx: exported_tx1 }, function(err, tx2) {
               // the imported transaction should have one input
               assert.equal(tx2.inputs.length, 1)
               // the input should have 'script' property
@@ -467,10 +467,10 @@ describe('datacash', function() {
             cash: { key: privKey }
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. import transaction
-            datacash.build({
+            datapay.build({
               tx: exported_tx1,
               data: ["0x6d02", "bye world"]
             }, function(err, tx2) {
@@ -489,12 +489,12 @@ describe('datacash', function() {
             cash: { key: privKey }
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. import transaction
             // But this time, we're updating the key attribute.
             // This should re-sign the transaction
-            datacash.build({
+            datapay.build({
               tx: exported_tx1,
               cash: {
                 key: privKey
@@ -512,12 +512,12 @@ describe('datacash', function() {
             cash: { key: privKey }
           }
           // 1. build initial transaction
-          datacash.build(options1, function(err, tx1) {
+          datapay.build(options1, function(err, tx1) {
             let exported_tx1 = tx1.toString();
             // 2. import transaction
             // But this time, we're updating the key attribute.
             // This should re-sign the transaction
-            datacash.build({
+            datapay.build({
               tx: exported_tx1,
               data: ["0x6d02", "bye world"],
               cash: {
@@ -536,18 +536,18 @@ describe('datacash', function() {
   describe('advanced', function() {
     describe('bitcoin', function() {
       it('exposes bitcoin', function() {
-        assert(datacash.bitcoin.Networks)
-        assert(datacash.bitcoin.Opcode)
+        assert(datapay.bitcoin.Networks)
+        assert(datapay.bitcoin.Opcode)
       })
     })
     describe('connect', function() {
       it('default', function() {
-        var insight = datacash.connect();
+        var insight = datapay.connect();
         assert.equal(insight.constructor.name, "Insight")
         assert.equal(insight.url, 'https://cashexplorer.bitcoin.com')
       })
       it('connect with url', function() {
-        var insight = datacash.connect('https://cashexplorer2.bitcoin.com');
+        var insight = datapay.connect('https://cashexplorer2.bitcoin.com');
         assert.equal(insight.constructor.name, "Insight")
         assert.equal(insight.url, 'https://cashexplorer2.bitcoin.com')
       })
