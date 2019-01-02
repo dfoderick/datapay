@@ -39,17 +39,12 @@ var build = function(options, callback) {
     const address = privateKey.toAddress();
     const insight = new explorer.Insight(rpcaddr)
     insight.getUnspentUtxos(address, function (err, res) {
-      console.log("res before = ", res)
-
       if (options.pay.filter && options.pay.filter.q && options.pay.filter.q.find) {
         let f = new mingo.Query(options.pay.filter.q.find)
         res = res.filter(function(item) {
           return f.test(item)
         })
       }
-
-      console.log("res after = ", res)
-
       let tx = new bitcoin.Transaction(options.tx).from(res);
 
       if (script) {

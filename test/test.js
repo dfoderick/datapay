@@ -1,12 +1,24 @@
+require('dotenv').config()
 const assert = require('assert');
 const bitcoin = require('bsv');
 const datapay = require('../index');
 
 // Private Key for Demo Purpose Only
-//const privKey = "5JZ4RXH4MoXpaUQMcJHo8DxhZtkf5U5VnYd9zZH8BRKZuAbxZEw"
-const privKey = "KxF4RmRid6SPFTG3dQcBLyHfkk6FhRiczGTMkaCCA6orxVm9t5Hh"
+const privKey = process.env.privKey
 
+var utxoSize;
 describe('datapay', function() {
+  beforeEach(function(done) {
+    const address = new bitcoin.PrivateKey(privKey).toAddress()
+    datapay.connect().getUnspentUtxos(address, function(err, utxos) {
+      if (err) {
+        console.log("Error: ", err)
+      } else {
+        utxoSize = utxos.length
+        done()
+      }
+    })
+  })
   describe('build', function() {
     describe('data only', function() {
       it('push data array', function(done) {
@@ -61,7 +73,6 @@ describe('datapay', function() {
           // and make a transaction that sends money to oneself
           // (since no receiver is specified)
           let generated = tx.toObject();
-          console.log(generated)
           done()
         })
       })
@@ -78,10 +89,8 @@ describe('datapay', function() {
           // (since no receiver is specified)
           let generated = tx.toObject();
 
-          // input length 1 => from the user specifiec by the private key
-          assert.equal(generated.inputs.length, 1)
-          // uses the default fee of 400
-          assert(generated.fee <= 400)
+          // input length utxoSize => from the user specifiec by the private key
+          assert.equal(generated.inputs.length, utxoSize)
           // contains a 'changeScript'
           assert(generated.changeScript)
 
@@ -149,7 +158,7 @@ describe('datapay', function() {
           let generated = tx.toObject();
 
           // input length 1 => from the user specifiec by the private key
-          assert.equal(generated.inputs.length, 1)
+          assert.equal(generated.inputs.length, utxoSize)
           // contains a 'changeScript'
           assert(generated.changeScript)
 
@@ -173,7 +182,7 @@ describe('datapay', function() {
           done()
         })
       })
-      it.only('pay.filter', function(done) {
+      it('pay.filter', function(done) {
         const options = {
           data: ["0x6d02", "hello world"],
           pay: {
@@ -191,7 +200,7 @@ describe('datapay', function() {
           let generated = tx.toObject();
 
           // input length 1 => from the user specifiec by the private key
-          assert.equal(generated.inputs.length, 1)
+          assert.equal(generated.inputs.length, 5)
           // contains a 'changeScript'
           assert(generated.changeScript)
 
@@ -364,8 +373,8 @@ describe('datapay', function() {
 
               // tx1's input should be empty
               assert.equal(tx1.inputs.length, 0)
-              // tx2's input should now have one item
-              assert.equal(tx2.inputs.length, 1)
+              // tx2's input should now have as many as the utxoSize
+              assert.equal(tx2.inputs.length, utxoSize)
 
               // tx1's output should have one item
               assert.equal(tx1.outputs.length, 1)
@@ -408,8 +417,8 @@ describe('datapay', function() {
             }
             datapay.build(options2, function(err, tx2) {
 
-              // tx2's input should now have one item
-              assert.equal(tx2.inputs.length, 1)
+              // tx2's input should now have as many as the utxoSize
+              assert.equal(tx2.inputs.length, utxoSize)
 
               // tx2's output should have two items
               assert.equal(tx2.outputs.length, 2)
@@ -443,8 +452,8 @@ describe('datapay', function() {
             let exported_tx1 = tx1.toString();
             // 2. import transaction
             datapay.build({ tx: exported_tx1 }, function(err, tx2) {
-              // the imported transaction should have one input
-              assert.equal(tx2.inputs.length, 1)
+              // the imported transaction should have as many as the utxoSize
+              assert.equal(tx2.inputs.length, utxoSize)
               // the input should have 'script' property
               assert(tx2.inputs[0].script)
               // the script should be public key hash in
@@ -480,7 +489,7 @@ describe('datapay', function() {
             })
           })
         })
-        it('tx+ pay', function() {
+        it('tx+ pay', function(done) {
           // the transaction has already been signed
           // the pay attribute should be ignored
           // and throw and error
@@ -506,7 +515,7 @@ describe('datapay', function() {
             })
           })
         })
-        it('tx + pay + data', function() {
+        it('tx + pay + data', function(done) {
           const options1 = {
             data: ["0x6d02", "hello world"],
             pay: { key: privKey }

@@ -24,6 +24,7 @@
     "dist"
   ],
   "devDependencies": {
+    "dotenv": "^6.2.0",
     "mocha": "^5.1.1",
     "uglify-es": "^3.3.9"
   }
