@@ -1,20 +1,22 @@
 {
-  "name": "datacash",
-  "version": "1.2.1",
-  "description": "post data over bitcoin cash",
+  "name": "datapay",
+  "version": "0.0.2",
+  "description": "post data over bitcoin sv",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "build": "browserify index.js --standalone datacash > dist/datacash.js && uglifyjs dist/datacash.js > dist/datacash.min.js"
+    "build": "browserify index.js --standalone datapay > dist/datapay.js && uglifyjs dist/datapay.js > dist/datapay.min.js"
   },
   "keywords": [
-    "bch",
-    "bitcoincash",
-    "bitcoin"
+    "bsv",
+    "bitcoinsv",
+    "bitcoin",
+    "blockchain",
+    "cryptocurrency"
   ],
   "author": "unwriter",
-  "license": "ISC",
-  "unpkg": "dist/datacash.min.js",
+  "license": "MIT",
+  "unpkg": "dist/datapay.min.js",
   "dependencies": {
     "bitcore-explorers": "^1.0.1",
     "bsv": "^0.20.3",
