@@ -536,8 +536,8 @@ describe('datapay', function() {
   describe('advanced', function() {
     describe('bitcoin', function() {
       it('exposes bitcoin', function() {
-        assert(datapay.bitcoin.Networks)
-        assert(datapay.bitcoin.Opcode)
+        assert(datapay.bsv.Networks)
+        assert(datapay.bsv.Opcode)
       })
     })
     describe('connect', function() {

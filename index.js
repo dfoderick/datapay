@@ -132,7 +132,7 @@ var connect = function(endpoint) {
 module.exports = {
   build: build,
   send: send,
-  bitcoin: bitcoin,
+  bsv: bitcoin,
   connect: connect,
 }
 
