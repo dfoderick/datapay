@@ -544,12 +544,12 @@ describe('datapay', function() {
       it('default', function() {
         var insight = datapay.connect();
         assert.equal(insight.constructor.name, "Insight")
-        assert.equal(insight.url, 'https://cashexplorer.bitcoin.com')
+        assert.equal(insight.url, 'https://bchsvexplorer.com')
       })
       it('connect with url', function() {
-        var insight = datapay.connect('https://cashexplorer2.bitcoin.com');
+        var insight = datapay.connect('https://bchsvexplorer2.com');
         assert.equal(insight.constructor.name, "Insight")
-        assert.equal(insight.url, 'https://cashexplorer2.bitcoin.com')
+        assert.equal(insight.url, 'https://bchsvexplorer2.com')
       })
     })
   })
