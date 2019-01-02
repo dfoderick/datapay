@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     update(e.target.value)
   }
   howEl.onclick = function(e) {
-    alert("The first column is where you declaratively describe your transaction (See datapay documentation). The second column is where the generated transaction is displayed. The third column displays the actual hex encoded string that can be broadcasted to BCH network. The default transaction description is just a simple data-only OP_RETURN transaction which only spends 300 satoshi transaction fee and nothing more, but you can experiment with different options as well. WARNING: THIS ACTUALLY WORKS, SO HANDLE WITH CARE.")
+    alert("The first column is where you declaratively describe your transaction (See datapay documentation). The second column is where the generated transaction is displayed. The third column displays the actual hex encoded string that can be broadcasted to Bitcoin SV network. The default transaction description is just a simple data-only OP_RETURN transaction which only spends 300 satoshi transaction fee and nothing more, but you can experiment with different options as well. WARNING: THIS ACTUALLY WORKS, SO HANDLE WITH CARE.")
     return false;
   }
   var update = function(html) {
