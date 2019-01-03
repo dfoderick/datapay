@@ -1,8 +1,8 @@
 # Datapay
 
-![logo](logo.png)
+Datapay is the simplest library for building and broadcasting data transactions to the **Bitcoin SV blockchain**.
 
-Datapay is the simplest library for building and broadcasting Bitcoin SV OP_RETURN transactions.
+![logo](logo.png)
 
 ---
 
