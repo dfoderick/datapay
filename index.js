@@ -99,8 +99,7 @@ var send = function(options, callback) {
 var _script = function(options) {
   var s = null;
   if (options.text) {
-    s = new bitcoin.Script();
-    s.add(Buffer.from(options.text))
+    s = bitcoin.Script.buildDataOut(options.text);
   } else if (options.data) {
     if (Array.isArray(options.data)) {
       s = new bitcoin.Script();
