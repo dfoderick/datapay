@@ -20,6 +20,25 @@ describe('datapay', function() {
     })
   })
   describe('build', function() {
+    describe('text only', function() {
+      it('plain text', function(done) {
+        const options = {
+          text: "hello world"
+        }
+        datapay.build(options, function(err, tx) {
+          let generated = tx.toObject();
+          // no input (since no one has signed yet)
+          assert.equal(generated.inputs.length, 0)
+          // output has one item (only OP_RETURN)
+          assert.equal(generated.outputs.length, 1)
+          // the only existing output is a script
+          assert(generated.outputs[0].script);
+          // uses the default fee of 400
+          assert(generated.fee <= 400)
+          done()
+        });
+      })
+    })
     describe('data only', function() {
       it('push data array', function(done) {
         const options = {
@@ -51,6 +70,24 @@ describe('datapay', function() {
           assert.equal(generated.outputs.length, 1)
           // the only existing output is a script
           assert(generated.outputs[0].script);
+          // uses the default fee of 400
+          assert(generated.fee <= 400)
+
+          done()
+        });
+      })
+      it('data as text string that represents text should fail', function(done) {
+        const options = {
+          data: "use text key to pass text instead"
+        }
+        datapay.build(options, function(err, tx) {
+          let generated = tx.toObject();
+          // no input (since no one has signed yet)
+          assert.equal(generated.inputs.length, 0)
+          // output has one item (only OP_RETURN)
+          assert.equal(generated.outputs.length, 1)
+          // the only existing output is an empty script
+          assert.equal(generated.outputs[0].script.length, 0);
           // uses the default fee of 400
           assert(generated.fee <= 400)
 

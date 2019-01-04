@@ -27,7 +27,7 @@ var build = function(options, callback) {
   } else {
     // construct script only if transaction doesn't exist
     // if a 'transaction' attribute exists, the 'data' should be ignored to avoid confusion
-    if (options.data) {
+    if (options.data || options.text) {
       script = _script(options)
     }
   }
@@ -98,7 +98,10 @@ var send = function(options, callback) {
 // compose script
 var _script = function(options) {
   var s = null;
-  if (options.data) {
+  if (options.text) {
+    s = new bitcoin.Script();
+    s.add(Buffer.from(options.text))
+  } else if (options.data) {
     if (Array.isArray(options.data)) {
       s = new bitcoin.Script();
       // Add op_return
